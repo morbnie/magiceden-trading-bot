@@ -1,0 +1,6 @@
+pandas>=2.2
+matplotlib>=3.9
+requests>=2.32
+pyyaml>=6.0
+tabulate>=0.9
+psycopg[binary]>=3.2   # optional Postgres sink for snapshot_daily.py

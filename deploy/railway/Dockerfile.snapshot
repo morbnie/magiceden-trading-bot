@@ -1,0 +1,31 @@
+# Snapshot cron service for Railway. Runs analysis/snapshot_daily.py once and exits;
+# the service's Cron Schedule setting (7 * * * *) starts it every hour.
+#
+# Build context is the repo root; Railway finds this file through the service
+# variable RAILWAY_DOCKERFILE_PATH=deploy/railway/Dockerfile.snapshot (see docs/deploy.md).
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    BOT_DATA_DIR=/data
+
+WORKDIR /app
+
+COPY analysis/requirements.txt analysis/requirements.txt
+RUN pip install -r analysis/requirements.txt
+
+COPY analysis/ analysis/
+COPY config/ config/
+
+# /data is where a Railway volume mounts (raw snapshots + snapshots.csv). Railway
+# rejects the Dockerfile VOLUME instruction; the mount is configured on the service.
+# Without a volume the directory is ephemeral and Postgres keeps the history.
+#
+# The container runs as root on purpose: Railway mounts volumes owned by root and
+# its documented fix for non-root images is RAILWAY_RUN_UID=0, which is the same
+# thing. The job only reads public APIs and writes to /data.
+RUN mkdir -p /data
+
+CMD ["python", "analysis/snapshot_daily.py"]

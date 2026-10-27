@@ -1,0 +1,8 @@
+.git
+.venv
+analysis/raw
+analysis/out
+**/__pycache__
+config/secrets.env
+*.sqlite
+*.db

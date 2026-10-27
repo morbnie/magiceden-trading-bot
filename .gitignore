@@ -1,0 +1,28 @@
+# secrets and local config: never commit keys, seed phrases or tokens
+config/secrets.env
+config/local.yaml
+*.key
+*.keypair
+*.seed
+id.json
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# raw API caches and outputs are regenerable (analysis/fetch_history.py, report.py)
+analysis/raw/
+analysis/out/
+analysis/report.md
+config/recommended.yaml
+
+# node (Phase 1+)
+node_modules/
+dist/
+
+# local state
+*.sqlite
+*.sqlite-journal
+*.db
+.DS_Store

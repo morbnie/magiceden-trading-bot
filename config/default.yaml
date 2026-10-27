@@ -1,0 +1,78 @@
+# Configuration for the Magic Eden trading bot.
+#
+# Everything is keyed by Magic Eden collection symbols (the slug in the
+# collection's URL, e.g. https://magiceden.io/marketplace/<symbol>). Copy this
+# file to config/local.yaml (gitignored) and point BOT_CONFIG at it, or edit
+# in place.
+
+# The collection whose market you are analysing and selling into.
+collection: okay_bears
+
+# Optional short label for the collection in charts and tables.
+collection_label: Bears
+
+# Optional related collections whose sales are read as a demand signal
+# (for example the other pieces of a set that buyers complete). Leave empty
+# if there are none.
+signal_collections: []
+#  - some_other_symbol
+signal_labels: {}
+#  some_other_symbol: Other
+
+# Optional CoinGecko NFT ids (https://api.coingecko.com/api/v3/nfts/list) for
+# the collections above. Only used for the current-snapshot summary and, with a
+# CoinGecko Demo key, for 365 days of floor history.
+coingecko_nft_ids: {}
+#  okay_bears: okay-bears
+
+# Optional wallets to tag in the competitor analysis (market makers, known
+# bots). The report also discovers the most active pool-fill buyers itself.
+watch_wallets: {}
+#  <wallet pubkey>: short note
+
+# Optional date ranges to shade in time charts (known demand events).
+events: []
+#  - { label: "2025 presale", start: 2025-11-24, end: 2025-12-08 }
+
+# Fiat currency for the anchoring test and reservation price: EUR or USD.
+fiat_currency: EUR
+
+# Selling phases. The report copies these into config/recommended.yaml and
+# derives the ladder of the first phase from the data; dates are yours to set.
+phases:
+  quiet:  { until: 2099-01-01, k: 1, max_daily: 1, ladder_pct: [0, 6] }
+
+# Engine parameters (used by the planned listing manager; see README).
+mode:
+  dry_run: true                    # no signing while true
+  manual_confirm: true             # approve each action before it is sent
+  paused: false
+
+objective:
+  reservation_fiat: 0              # price below which a unit is held; 0 = use the rule below
+  reservation_rule_pct_of_30d_median: 90
+  reservation_sol_min: 0           # hard backstop in SOL
+
+sell:
+  tick_sol: 0.0001                 # slot 1 sits this far above the competing floor
+  never_undercut: true
+  reprice_threshold_pct: 0.5
+  listing_expiry_hours: 0          # 0 = no expiry
+
+bids:
+  take_bid_band_pct: 2.0           # sell into a bid within this of the floor (net of fees)
+  min_escrow_margin_sol: 0.05
+
+breakers:
+  floor_drop_24h_pct: 15           # delist all, pause, alert
+  api_error_streak: 5
+  max_tx_per_hour: 20
+
+fees:                              # placeholders until verified from a real transaction
+  platform_pct: 2.0
+  royalty_pct_listing: 0
+  royalty_pct_pool: 0
+
+loop:
+  interval_s: 60
+  me_qpm: 100                      # stay under the public 120 requests per minute
